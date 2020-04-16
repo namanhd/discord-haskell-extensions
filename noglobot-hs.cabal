@@ -1,0 +1,20 @@
+name:                noglobot-hs
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/namanhd1nh/noglobot-hs
+license:             MIT
+license-file:        LICENSE
+author:              Nam Anh Dinh
+maintainer:          namanh@uchicago.edu
+copyright:           2020 Nam Anh Dinh
+category:            Discord
+build-type:          Simple
+cabal-version:       >=1.10
+extra-source-files:  README.md
+
+executable noglobot-hs
+  hs-source-dirs:      src
+  main-is:             Main.hs
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
