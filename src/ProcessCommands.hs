@@ -3,7 +3,7 @@ module ProcessCommands (
   CmdFunc,
   CmdFunc1,
   CommandTree,
-  cmd,
+  cmds,
   cmd0,
   cmd1,
   restCreateMessage,
@@ -23,25 +23,25 @@ type CmdFunc = Context -> IO ()
 -- unlike discord.py's convert-on-pass mechanism.
 type CmdFunc1 = Context -> T.Text -> IO ()
 
-data CommandArgument = ArgSub CommandTree | NoArg
-
 data Command = 
-    Cmd   String CmdFunc CommandArgument
-  | Cmd1  String CmdFunc1
+    Cmds String CmdFunc CommandTree
+  | Cmd0 String CmdFunc
+  | Cmd1 String CmdFunc1
 
 type CommandTree = [Command]
 
 cmdName :: Command -> T.Text
-cmdName (Cmd nameStr _ _) = T.pack nameStr
+cmdName (Cmds nameStr _ _) = T.pack nameStr
+cmdName (Cmd0 nameStr _) = T.pack nameStr
 cmdName (Cmd1 nameStr _) = T.pack nameStr
 
 -- | A command with subcommands
-cmd :: String -> CmdFunc -> CommandTree -> Command
-cmd name cmdfunc subcmds = Cmd name cmdfunc (ArgSub subcmds)
+cmds :: String -> CmdFunc -> CommandTree -> Command
+cmds = Cmds
 
 -- | An atomic command with no arguments
 cmd0 :: String -> CmdFunc -> Command
-cmd0 name cmdfunc = Cmd name cmdfunc NoArg
+cmd0 = Cmd0
 
 -- | An atomic command with a concrete argument
 cmd1 :: String -> CmdFunc1 -> Command
@@ -59,9 +59,9 @@ parseAndEvalCommand ctx (cmd:cmds) remains =
   if cmdName cmd /= prefixText 
   then parseAndEvalCommand ctx cmds remains
   else case cmd of
-    Cmd1 _ _      -> Right $ runCmdIOWith suffixText
-    Cmd _ _ NoArg -> Right $ runCmdIOWith (T.empty)
-    Cmd _ _ (ArgSub subcmds) -> case T.strip suffixText == T.empty of
+    Cmd1 _ _ -> Right $ runCmdIOWith suffixText
+    Cmd0 _ _ -> Right $ runCmdIOWith (T.empty)
+    Cmds _ _ subcmds -> case T.strip suffixText == T.empty of
       True  -> Right $ runCmdIOWith (T.empty)
       False -> case parseAndEvalCommand ctx subcmds suffixText of
         Left errorMsg   -> Right $ runCmdIOWith (T.empty)
@@ -72,8 +72,9 @@ parseAndEvalCommand ctx (cmd:cmds) remains =
   runCmdIOWith = runCmdIO ctx cmd
 
 runCmdIO :: Context -> Command -> T.Text -> IO ()
+runCmdIO ctx (Cmds name func _) _ = func ctx
+runCmdIO ctx (Cmd0 name func) _ = func ctx
 runCmdIO ctx (Cmd1 name func) argtext = func ctx argtext
-runCmdIO ctx (Cmd name func _) _ = func ctx
 
 executeEvaluatedCommand :: Either String (IO ()) -> IO ()
 executeEvaluatedCommand (Left errorMsg) = putStrLn errorMsg

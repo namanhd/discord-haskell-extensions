@@ -12,7 +12,7 @@ myCmdTree =
   [
     cmd0 "help" cmdHelp,
     cmd1 "repeat" cmdRepeat,
-    cmd  "say" cmdSayDefault 
+    cmds  "say" cmdSayDefault 
       [
         cmd0 "ligma" cmdSayLigma,
         cmd0 "sugma" cmdSaySugma
