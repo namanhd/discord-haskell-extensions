@@ -14,8 +14,8 @@ myCmdTree =
     cmd1 "repeat" cmdRepeat,
     cmds  "say" cmdSayDefault 
       [
-        cmd0 "ligma" cmdSayLigma,
-        cmd0 "sugma" cmdSaySugma
+        cmd0 "marco" cmdSayLigma,
+        cmd0 "ayy" cmdSaySugma
       ]
   ]
 
@@ -23,13 +23,13 @@ cmdHelp :: CmdFunc
 cmdHelp ctx = restCreateMessage ctx $ T.pack "I can't help you, I'm just a bebe"
 
 cmdSayDefault :: CmdFunc
-cmdSayDefault ctx = restCreateMessage ctx $ T.pack "No ligging here"
+cmdSayDefault ctx = restCreateMessage ctx $ T.pack "I don't know what to say"
 
 cmdSayLigma :: CmdFunc
-cmdSayLigma ctx = restCreateMessage ctx $ T.pack "balls"
+cmdSayLigma ctx = restCreateMessage ctx $ T.pack "polo"
 
 cmdSaySugma :: CmdFunc
-cmdSaySugma ctx = restCreateMessage ctx $ T.pack "dicc"
+cmdSaySugma ctx = restCreateMessage ctx $ T.pack "lmao"
 
 cmdRepeat :: CmdFunc1
 cmdRepeat ctx argtext = restCreateMessage ctx argtext
