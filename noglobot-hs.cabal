@@ -1,6 +1,6 @@
 name:                noglobot-hs
 version:             0.1.0.0
--- synopsis:
+synopsis:            Nogloff's Discord bot, now in Haskell
 -- description:
 homepage:            https://github.com/namanhd1nh/noglobot-hs
 license:             MIT
@@ -17,4 +17,10 @@ executable noglobot-hs
   hs-source-dirs:      src
   main-is:             Main.hs
   default-language:    Haskell2010
+  ghc-options:         -threaded
+  other-modules:       Commands
+                     , ProcessCommands
+                     , ProcessMessage
   build-depends:       base >= 4.7 && < 5
+                     , text
+                     , discord-haskell
