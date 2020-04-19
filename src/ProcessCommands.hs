@@ -23,12 +23,12 @@ type CmdFunc = Context -> IO ()
 -- unlike discord.py's convert-on-pass mechanism.
 type CmdFunc1 = Context -> T.Text -> IO ()
 
+type CommandTree = [Command]
+
 data Command = 
     Cmds String CmdFunc CommandTree
   | Cmd0 String CmdFunc
   | Cmd1 String CmdFunc1
-
-type CommandTree = [Command]
 
 cmdName :: Command -> T.Text
 cmdName (Cmds nameStr _ _) = T.pack nameStr
@@ -52,6 +52,7 @@ restCreateMessage :: Context -> T.Text -> IO ()
 restCreateMessage (dis, msg) t = 
   (restCall dis $ DR.CreateMessage (messageChannel msg) t) *> pure ()
 
+-- | Parse and try to evaluate the command into an IO action
 parseAndEvalCommand :: Context -> CommandTree -> T.Text -> Either String (IO ())
 parseAndEvalCommand ctx [] remains = 
   Left $ "Command not found; parsed up to '" ++ T.unpack remains ++ "' before failing"
@@ -71,11 +72,13 @@ parseAndEvalCommand ctx (cmd:cmds) remains =
   suffixText = T.drop (1 + T.length prefixText) remains
   runCmdIOWith = runCmdIO ctx cmd
 
+-- | Do the user-defined IO () function for the command
 runCmdIO :: Context -> Command -> T.Text -> IO ()
 runCmdIO ctx (Cmds name func _) _ = func ctx
 runCmdIO ctx (Cmd0 name func) _ = func ctx
 runCmdIO ctx (Cmd1 name func) argtext = func ctx argtext
 
+-- | Run the IO action eval'd from the command, or report if invalid command
 executeEvaluatedCommand :: Either String (IO ()) -> IO ()
 executeEvaluatedCommand (Left errorMsg) = putStrLn errorMsg
 executeEvaluatedCommand (Right ioResult) = ioResult
