@@ -6,11 +6,11 @@ import Discord
 import Discord.Types
 
 import ProcessCommands
-import Commands (myCmdTree)
+import Commands (myCmds)
 
 processMsg :: Context -> T.Text -> IO ()
 processMsg ctx@(dis, msg) cmdPrefix = case T.stripPrefix cmdPrefix (messageText msg) of
-  Just cmdText -> processCommands ctx myCmdTree cmdText
+  Just cmdText -> processCommands ctx myCmds cmdText
   Nothing -> processNonCommands ctx
 
 processNonCommands :: Context -> IO ()

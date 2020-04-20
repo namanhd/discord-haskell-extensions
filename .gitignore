@@ -1,5 +1,6 @@
 *.hi
 *.o
 *.lock
+*.old
 
 .stack-work/

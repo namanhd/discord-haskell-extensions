@@ -23,4 +23,6 @@ executable noglobot-hs
                      , ProcessMessage
   build-depends:       base >= 4.7 && < 5
                      , text
+                     , mtl
+                     , containers
                      , discord-haskell
