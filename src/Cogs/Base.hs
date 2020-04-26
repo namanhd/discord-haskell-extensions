@@ -16,11 +16,11 @@ import Ext.Commands
 
 baseCmds :: Commands
 baseCmds = do
-  helpcmd <- cmd0 "help" cmdHelp "Shows help message." "Usage: help [command]."
+  helpcmd <- cmd0 "help" cmdHelp "Shows help message." "Usage: help"
   cmd1 "greet" cmdGreet "Greets a user." "Usage: greet [@user]. Greets a user."
   cmd0 "bark" cmdBark "Barks at you." "It just barks. How cute!"
   cmdA "repeat" cmdRepeat "Repeats a message" "Everything after 'repeat' is repeated."
-  saycmd <- cmds "say" cmdSayDefault "Says something." "Usage: say <marco|ayy|help>." $ do
+  saycmd <- cmds "say" cmdSayDefault "Says something." "Usage: say <marco|ayy|help>" $ do
     cmd0 "marco" cmdSayMarco "Responds to marco." "Responds to marco with polo."
     cmd0 "ayy" cmdSayAyy "Responds to ayy." "Responds to ayy with lmao."
     refer helpcmd

@@ -14,7 +14,7 @@ the lower-level `discord-haskell` library so that common Discord bot features li
 
 baseCmds :: Commands
 baseCmds = do
-  helpcmd <- cmd0 "help" cmdHelp "Shows help message." "Usage: help [command]."
+  helpcmd <- cmd0 "help" cmdHelp "Shows help message." "Usage: help"
   cmd1 "greet" cmdGreet "Greets a user." "Usage: greet [@user]. Greets a user."
   cmd0 "bark" cmdBark "Barks at you." "It just barks. How cute!"
   saycmd <- cmds "say" cmdSayDefault "Says something." "Usage: say/speak <ayy|help>." $ do
