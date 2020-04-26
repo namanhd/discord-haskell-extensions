@@ -8,7 +8,7 @@ import Discord.Types
 import Discord.Requests as DR
 import System.Environment (getEnv)
 
-import ProcessMessage (processMsg)
+import ProcessMessage
 
 cmdPrefix :: T.Text
 cmdPrefix = T.pack "dm "
