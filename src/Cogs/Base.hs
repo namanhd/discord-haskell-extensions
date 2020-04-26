@@ -25,6 +25,7 @@ baseCmds = do
     cmd0 "ayy" cmdSayAyy "Responds to ayy." "Responds to ayy with lmao."
     refer helpcmd
   alias "speak" saycmd
+  cmd2 "phrases" cmd2Phrases "Underlines two phrases." "Usage: phrases [text1] [text2], quotes supported" 
 
 cmdBark :: Context -> IO ()
 cmdBark ctx = restCreateMessage ctx "Woof! (Noglobot Haskell barks first!)"
@@ -46,3 +47,6 @@ cmdRepeat ctx argtext = restCreateMessage ctx argtext
 
 cmdGreet :: Context -> User -> IO ()
 cmdGreet ctx user = restCreateMessage ctx $ "Hi, " <> userName user <> "!"
+
+cmd2Phrases :: Context -> T.Text -> T.Text -> IO ()
+cmd2Phrases ctx t1 t2 = restCreateMessage ctx $ "__" <> t1 <> "__ and __" <> t2 <> "__"

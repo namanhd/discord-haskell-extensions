@@ -153,18 +153,18 @@ runCmdIO :: Context -> Command -> T.Text -> IO ()
 runCmdIO ctx (Cmds func _) _ = func ctx
 runCmdIO ctx (Cmd0 func) _ = func ctx
 runCmdIO ctx (CmdA func) argtext = func ctx argtext
-runCmdIO ctx (CmdN multiArgFunc) argtext = runMultiArgIO ctx multiArgFunc rawArgs
+runCmdIO ctx (CmdN multiArgFunc) argtext = 
+  runMultiArgIO ctx multiArgFunc $ splitPreserveQuotes argtext
     where  
   splitOnlyOutOfQuotes :: Int -> [T.Text] -> [[T.Text]]
   splitOnlyOutOfQuotes _ [] = []
-  splitOnlyOutOfQuotes i (sub:subs) = 
+  splitOnlyOutOfQuotes i (sub:subs) =
+    -- Even-indexed items in the output list are outside of quotes. Odds are inside. 
     (if (i `rem` 2 == 0) then T.split isSpace sub else [sub]) : splitOnlyOutOfQuotes (i+1) subs
 
   splitPreserveQuotes :: T.Text -> [T.Text]
-  splitPreserveQuotes = join . splitOnlyOutOfQuotes 0 . T.split (=='"') 
-    -- Even-indexed items in the output list are outside of quotes. Odds are inside.
-  
-  rawArgs = splitPreserveQuotes argtext
+  splitPreserveQuotes = 
+    filter (not . T.null) . join . splitOnlyOutOfQuotes 0 . T.split (=='"') 
 
 -- | Do the user-defined multi-argument IO () function for the command
 runMultiArgIO :: Context -> MultiArgCommandFunction -> [T.Text] -> IO ()
@@ -191,7 +191,8 @@ runMultiArgIO ctx@(dis,msg) multiArgFunc args =
     w <- fromMention dis c
     x <- fromMention dis d
     lift $ func ctx u v w x
-  runMultiArgIOMaybe _ _ _ = MaybeT $ pure Nothing
+  runMultiArgIOMaybe _ _ _ = 
+    lift $ putStrLn "[runMultiArgIO] Error in pattern match: Invalid number of arguments"
 
 -- | Unpack and execute the IO action eval'd from the command, or report if invalid command
 executeEvaluatedCommand :: Either String (IO ()) -> IO ()
