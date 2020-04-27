@@ -1,10 +1,8 @@
 # Noglobot Haskell
 
-My own Discord bot, using the `discord-haskell` library. 
-
-Originally a personal bot written mostly for my own learning; 
-now more like a general abstraction layer over
-the lower-level `discord-haskell` library so that common Discord bot features like commands can be more quickly written.
+Originally a personal bot written mostly for my own learning; now more like a general
+abstraction layer over the lower-level `discord-haskell` library so that common Discord 
+bot features, specifically commands, can be more quickly written.
 
 ## Features
 - Easy command definition interface using `do` notation. Supports subcommands, aliasing, and referring to previously-defined commands.
@@ -47,5 +45,13 @@ cogs :: [Commands]
 cogs = [baseCog, moderationCog, gamesCog]
 ```
 
+## Planned features
+
+- Support for "menus" that listen to reaction "buttons" for user interactions
+- Owner and role checks for commands
+- A function to expose help details of the command hierarchy to easily walk through commands and build a custom help command
+- Voice and music-botting support (this isn't in `discord-haskell` so I'll have to roll up my own implementation, which is potentially difficult)
+
 ## Inspiration
+
 Noglobot started and still is maintained as a `discord.py` bot. As a result, a lot of these features were inspired by functionality from `discord.py`, namely the use of converters and cogs.
