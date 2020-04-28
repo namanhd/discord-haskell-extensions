@@ -21,10 +21,6 @@ unpackMaybeSnowflake :: Maybe Snowflake -> Snowflake
 unpackMaybeSnowflake Nothing = Snowflake 0
 unpackMaybeSnowflake (Just word) = word
 
--- | Reads in a Word64 Snowflake from Text
-readSnowflake :: T.Text -> Snowflake
-readSnowflake = unpackMaybeSnowflake . readMaybe . T.unpack
-
 -- | A typeclass for any type that can be mentioned or 
 -- parsed from a command or message
 class Mentionable a where
@@ -68,14 +64,13 @@ instance Mentionable Double where
 
 -- TODO: add a Mentionable instance for Roles and Emojis (or whatever they're called in the lib)
 
--- | Get snowflake from things of the form <cFLAKE> 
+-- | Get snowflake from things of the form <c!FLAKE> 
 -- where c is a char, and FLAKE is a Word64
 parseMentionedFlake :: Char -> T.Text -> Snowflake
 parseMentionedFlake c =
     unpackMaybeSnowflake 
-  . fmap readSnowflake 
-  . (>>= id) -- join :: m (m a) -> m a
-  . fmap (T.stripPrefix (T.pack $ '<':c:['!']))
+  . (>>= readMaybe . T.unpack)
+  . (>>= T.stripPrefix (T.pack $ '<':c:['!']))
   . T.stripSuffix (T.pack ">")
 
 parseUserFlake :: T.Text -> Snowflake
