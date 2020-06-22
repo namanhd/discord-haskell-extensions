@@ -1,8 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Cogs.Base
-  (
-    baseCmds
+  ( baseCmds
   ) where
 
 import qualified Data.Text as T

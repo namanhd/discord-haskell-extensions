@@ -1,9 +1,8 @@
 module Ext.Mentionables
-  (
-      Mentionable
-    , getId
-    , toMention
-    , fromMention
+  ( Mentionable
+  , getId
+  , toMention
+  , fromMention
   ) where
 
 import Control.Monad.Trans.Class (lift)
