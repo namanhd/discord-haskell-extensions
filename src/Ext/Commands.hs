@@ -220,5 +220,5 @@ executeEvaluatedCommand (Right ioResult) = ioResult
 -- | IO action to encapsulate all the command processing on MessageCreate
 processCommands :: Context -> [Commands] -> T.Text -> IO ()
 processCommands ctx allCmdsStates t = 
-    let (cmdTree, aliases) = execState (foldr (*>) (pure ()) allCmdsStates) ([],M.empty) in
+    let (cmdTree, aliases) = execState (sequence_ allCmdsStates) mempty in
   executeEvaluatedCommand $ parseAndEvalCommand ctx cmdTree aliases t
