@@ -132,16 +132,16 @@ getPrefixText = T.takeWhile (not . isSpace)
 
 -- | Find what the main name of a command is from its alias if possible
 resolveCommandAlias :: AliasMap -> T.Text -> Either String T.Text
-resolveCommandAlias aliasMap remains = case M.lookup (getPrefixText remains) aliasMap of
-  Nothing       -> Left "[resolveCommandAlias] Input is not an alias of any recognized command"
-  Just mainName -> Right mainName
-
+resolveCommandAlias aliasMap remains = 
+  maybe (Left "[resolveCommandAlias] Input is not an alias of any recognized command") Right $ 
+    M.lookup (getPrefixText remains) aliasMap
+  
 -- | Get the Command with the resolved name
 getCommandFromResolvedName :: CommandTree -> T.Text -> Either String Command
 getCommandFromResolvedName [] _ = Left "[getCommandFromResolvedName] No commands were defined"
-getCommandFromResolvedName (cmd:cmds) mainName = case mainName == name cmd of
-  False -> getCommandFromResolvedName cmds mainName
-  True  -> Right $ command cmd
+getCommandFromResolvedName (cmd:cmds) mainName = if mainName == name cmd
+  then Right $ command cmd
+  else getCommandFromResolvedName cmds mainName
 
 -- | Evaluate the found command based on what kind it is
 evalCommand :: Context -> AliasMap -> T.Text -> Command -> Either String (IO ())
@@ -149,11 +149,10 @@ evalCommand ctx aliasMap remains cmd = case cmd of
   CmdN _ -> Right $ runCmdIOWith suffixText
   CmdA _ -> Right $ runCmdIOWith suffixText
   Cmd0 _ -> Right $ runCmdIOWith (T.empty)
-  Cmds _ subCmds -> case T.strip suffixText == T.empty of
-    True  -> Right $ runCmdIOWith (T.empty)
-    False -> case parseAndEvalCommand ctx subCmds aliasMap suffixText of
-      Left errorMsg   -> Right $ runCmdIOWith (T.empty)
-      Right ioResult  -> Right ioResult
+  Cmds _ subCmds -> if T.strip suffixText == T.empty
+    then Right $ runCmdIOWith (T.empty)
+    else either (const . Right $ runCmdIOWith (T.empty)) Right $
+      parseAndEvalCommand ctx subCmds aliasMap suffixText
   where
     suffixText = T.drop (1 + T.length (getPrefixText remains)) remains
     runCmdIOWith = runCmdIO ctx cmd
