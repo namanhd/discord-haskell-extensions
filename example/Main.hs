@@ -1,5 +1,6 @@
 module Main where
 
+import Control.Monad.Trans (lift)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 
@@ -8,7 +9,7 @@ import Discord.Types
 import Discord.Requests as DR
 import System.Environment (getEnv)
 
-import ProcessMessage
+import Bot.ProcessMessage
 
 cmdPrefix :: T.Text
 cmdPrefix = T.pack "dm "
@@ -31,20 +32,19 @@ botMain = do
   TIO.putStrLn t
 
 -- | Run at bot init time
-handlerOnReady :: DiscordHandle -> IO ()
-handlerOnReady dis = do
-  Right user <- restCall dis DR.GetCurrentUser
-  TIO.putStrLn $ (T.pack "Noglobot Haskell.\nLogged on as ") <> userName user
+handlerOnReady :: DiscordHandler ()
+handlerOnReady = do
+  Right user <- restCall DR.GetCurrentUser
+  lift $ TIO.putStrLn $ (T.pack "Logged on as ") <> userName user
   pure ()
 
 -- | Run specific functions based on the incoming event
-handlerOnEvent :: DiscordHandle -> Event -> IO ()
-handlerOnEvent dis event = case event of 
-  MessageCreate m -> onMessageCreate dis m
+handlerOnEvent ::  Event -> DiscordHandler ()
+handlerOnEvent event = case event of 
+  MessageCreate m -> onMessageCreate m
   _ -> pure ()
 
 -- | Run when a new message event is invoked
-onMessageCreate :: DiscordHandle -> Message -> IO ()
-onMessageCreate dis m = 
-  if userIsBot (messageAuthor m) then pure () 
-  else processMsg (dis, m) cmdPrefix
+onMessageCreate :: Message -> DiscordHandler ()
+onMessageCreate m = if userIsBot (messageAuthor m) then pure ()
+  else processMsg m cmdPrefix

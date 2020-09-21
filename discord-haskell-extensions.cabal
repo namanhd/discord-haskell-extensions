@@ -1,0 +1,45 @@
+name:                discord-haskell-extensions
+version:             0.1.0.1
+synopsis:            discord-haskell helper modules for easier bot creation
+-- description:
+homepage:            https://github.com/namanhd1nh/discord-haskell-extensions
+license:             MIT
+license-file:        LICENSE
+author:              Nam Anh Dinh
+maintainer:          namanh@uchicago.edu
+copyright:           2020 Nam Anh Dinh
+category:            Network
+build-type:          Simple
+cabal-version:       >=1.10
+extra-source-files:  README.md
+
+library
+  ghc-options:       -threaded -O2 -Wall
+  hs-source-dirs:    src
+  default-language:  Haskell2010
+  exposed-modules:   Discord.Ext.Commands
+                   , Discord.Ext.Mentionables
+  build-depends:     base >= 4.7 && < 5
+                   , text
+                   , mtl
+                   , transformers
+                   , containers
+                   , discord-haskell
+
+executable example-bot
+  ghc-options:         -threaded -O2
+  hs-source-dirs:      example
+                     , src
+  default-language:    Haskell2010
+  main-is:             Main.hs
+  other-modules:       Bot.Cogs.Base
+                     , Bot.ProcessMessage
+                     , Discord.Ext.Commands
+                     , Discord.Ext.Mentionables
+  build-depends:       base >= 4.7 && < 5
+                     , text
+                     , mtl
+                     , transformers
+                     , containers
+                     , discord-haskell
+                     , discord-haskell-extensions
